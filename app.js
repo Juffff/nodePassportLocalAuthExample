@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const {passport, checkAuth} = require('./lib/auth/auth');
 const local = require('./lib/templates/local');
 const fake = require('./lib/fake');
+const got = require('got');
 
 
 
@@ -38,7 +39,11 @@ app
     })
 
     .get('/', checkAuth, (req, res) => {
-        res.send(local);
+        got('http://localhost:3000/api/1.0.0/users')
+            .then(data => JSON.parse(data.body))
+            .then(data => {
+                res.send(local(data[0]))
+            });
     });
 
 app
